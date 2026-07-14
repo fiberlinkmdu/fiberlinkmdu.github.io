@@ -133,6 +133,19 @@
     font-family: inherit;
   }
   .input-wrap input::-webkit-inner-spin-button { opacity: 0.3; }
+  .opex-toggle {
+    display: flex; gap: 4px;
+    background: #181818; border: 1px solid #2e2e2e;
+    border-radius: 6px; padding: 3px;
+  }
+  .opex-opt {
+    background: none; border: none; outline: none;
+    color: #888; font-size: 12px; font-weight: 500; font-family: inherit;
+    padding: 5px 12px; border-radius: 4px; cursor: pointer;
+    white-space: nowrap; transition: all 0.15s;
+  }
+  .opex-opt:hover { color: #fff; }
+  .opex-opt.active { background: #4CAF50; color: #000; font-weight: 600; }
   .result-row {
     display: flex;
     align-items: center;
@@ -162,6 +175,7 @@
   .metric-val { font-size: 22px; font-weight: 700; color: #fff; line-height: 1; }
   .metric-sub { font-size: 10px; color: #fff; margin-top: 3px; }
   .full-card { grid-column: 1 / -1; }
+  .page2-spacer { display: none; }
   .cap-table { width: 100%; border-collapse: collapse; }
   .cap-table th {
     font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
@@ -218,31 +232,41 @@
   .export-btn svg { flex-shrink: 0; }
 
   @media print {
-    @page { margin: 0.3in; size: A4 landscape !important; background: #000; }
+    @page { margin: 0; size: A4 portrait; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
-    html { zoom: 0.72; }
-    html, body { background: #000 !important; color: #fff !important; padding: 6px 10px 10px; }
+    html { background: #000 !important; }
+    body { background: #000 !important; color: #fff !important; margin: 0 !important; font-size: 10px; padding: 0.3in !important; box-sizing: border-box !important; }
     .export-btn { display: none !important; }
     .reset-btn  { display: none !important; }
-    .header { margin-bottom: 8px; padding-bottom: 6px; border-bottom-color: #2a2a2a !important; }
-    .layout { gap: 8px; }
-    .card { background: #111 !important; border-color: #2a2a2a !important; padding: 8px 10px; break-inside: avoid; }
+    .header { margin-bottom: 10px; padding-bottom: 8px; border-bottom-color: #2a2a2a !important; }
+    .logo-img { height: 54px; }
+    .layout { gap: 10px; grid-template-columns: 1fr 1fr; }
+    .card { background: #111 !important; border-color: #2a2a2a !important; padding: 10px 12px; break-inside: avoid; }
     .card.accent { border-color: #4CAF50 !important; }
-    .metric { background: #0d0d0d !important; border-color: #1e1e1e !important; padding: 6px 8px !important; }
-    .metric-val { font-size: 20px !important; }
+    .card-title { font-size: 12px !important; margin-bottom: 10px; padding-bottom: 7px; }
+    .metric { background: #0d0d0d !important; border-color: #1e1e1e !important; padding: 7px 9px !important; break-inside: avoid; }
+    .metric-val { font-size: 16px !important; }
+    .metric-lbl { font-size: 8px !important; }
+    .metric-sub { font-size: 8px !important; }
     .input-wrap { background: #181818 !important; border-color: #2e2e2e !important; }
-    .input-row { margin-bottom: 4px !important; }
+    .input-row { padding: 5px 0 !important; }
+    .input-label { font-size: 11px !important; }
+    .opex-toggle { background: #181818 !important; border-color: #2e2e2e !important; }
+    .opex-opt { font-size: 10px !important; padding: 4px 8px !important; }
+    .opex-opt.active { background: #4CAF50 !important; color: #000 !important; }
     .bar-track { background: #1a1a1a !important; }
     .bar-row { margin-bottom: 2px !important; }
-    .section-divider { margin-top: 8px !important; padding-top: 8px !important; }
-    .result-row { padding: 3px 0 !important; }
+    .bar-lbl, .bar-val { font-size: 9px !important; }
+    .section-divider { margin: 10px 0 8px !important; padding-top: 9px !important; }
+    .result-row { padding: 4px 0 !important; }
+    .result-label { font-size: 11px !important; }
     .full-card { break-inside: avoid; }
+    .page2-spacer { break-before: page; display: block !important; height: 0.4in; }
     .cap-table th, .cap-table td { padding: 4px 6px !important; font-size: 10px !important; }
     .alert { display: none !important; }
-    .footer { margin-top: 6px; border-top-color: #1a1a1a !important; }
-    #be-note { margin-top: 2px !important; }
+    .footer { margin-top: 10px; border-top-color: #1a1a1a !important; }
+    #be-note { margin-top: 3px !important; }
   }
-    .metric { background: #0d0d0d !important; border-color: #1e1e1e !important; padding: 6px 8px !important; }
 </style>
 </head>
 <body>
@@ -303,8 +327,24 @@
     <div class="input-row">
       <span class="input-label">occupancy</span>
       <div class="input-wrap">
-        <input type="number" id="occ" value="100" min="0" max="100" step="1">
+        <input type="number" id="occ" value="95" min="0" max="100" step="1">
         <span class="suf">%</span>
+      </div>
+    </div>
+    <div class="input-row">
+      <span class="input-label">courtesy building fiber optic internet (retail value)</span>
+      <div class="input-wrap">
+        <span class="pre">$</span>
+        <input type="number" id="courtesy" value="1000" min="0" max="10000" step="50">
+        <span class="suf">/ mo</span>
+      </div>
+    </div>
+    <div class="input-row">
+      <span class="input-label">courtesy building fiber internet treatment</span>
+      <div class="opex-toggle">
+        <button type="button" class="opex-opt active" data-mode="avoid">avoids future opex</button>
+        <button type="button" class="opex-opt" data-mode="reduce">reduces existing opex</button>
+        <button type="button" class="opex-opt" data-mode="off">off</button>
       </div>
     </div>
 
@@ -327,6 +367,14 @@
       <div class="result-row">
         <span class="result-label">annual bulk cost to owner</span>
         <span class="result-val" id="r-cost">$36,000 / yr</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">courtesy internet value to owner</span>
+        <span class="result-val green" id="r-courtesy-mo">+$1,000 / mo</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label" id="r-opex-lbl">annual opex avoided</span>
+        <span class="result-val green" id="r-courtesy-yr">+$12,000 / yr</span>
       </div>
     </div>
 
@@ -374,6 +422,16 @@
           <div class="metric-val" id="m-pay">$8,400</div>
           <div class="metric-sub">asset value / unit count</div>
         </div>
+        <div class="metric">
+          <div class="metric-lbl" id="m-opex-lbl">opex value created</div>
+          <div class="metric-val green" id="m-opex">$240K</div>
+          <div class="metric-sub" id="m-opex-sub">courtesy internet, at 5.0% cap</div>
+        </div>
+        <div class="metric" style="border-color:#4CAF50">
+          <div class="metric-lbl">combined value added</div>
+          <div class="metric-val green" id="m-combined">$1.32M</div>
+          <div class="metric-sub">amenity + opex</div>
+        </div>
       </div>
     </div>
 
@@ -382,9 +440,39 @@
       <div class="bar-wrap" id="bar-wrap"></div>
     </div>
 
+    <div class="card">
+      <div class="card-title">common area wifi networks</div>
+      <p style="font-size:12px;color:#bbb;line-height:1.5;margin-bottom:14px">
+        A single fiber backbone, logically segmented into purpose-built networks — each isolated for security and performance, with full flexibility to make moves, adds, and changes as the property's ecosystem evolves.
+      </p>
+      <div class="metrics-grid">
+        <div class="metric">
+          <div class="metric-lbl">guest network</div>
+          <div class="metric-val" style="font-size:15px">instant, branded access</div>
+          <div class="metric-sub" style="line-height:1.5;margin-top:6px">Frictionless sign-on the moment a guest arrives. Sleek branded splash page, terms-of-service acceptance for indemnification, content filtering, and session timeouts.</div>
+        </div>
+        <div class="metric">
+          <div class="metric-lbl">operational wifi</div>
+          <div class="metric-val" style="font-size:15px">staff &amp; back-of-house</div>
+          <div class="metric-sub" style="line-height:1.5;margin-top:6px">Secure, isolated network for the leasing office, maintenance, and operations teams — kept separate from all resident and guest traffic.</div>
+        </div>
+        <div class="metric">
+          <div class="metric-lbl">iot &amp; building systems</div>
+          <div class="metric-val" style="font-size:15px">connected infrastructure</div>
+          <div class="metric-sub" style="line-height:1.5;margin-top:6px">A dedicated segment for building equipment, Pelotons, common-area TVs, and coworking devices — contained so smart devices never touch sensitive networks.</div>
+        </div>
+        <div class="metric">
+          <div class="metric-lbl">resident wifi</div>
+          <div class="metric-val" style="font-size:15px">seamless common areas</div>
+          <div class="metric-sub" style="line-height:1.5;margin-top:6px">One-time token sign-on that follows residents across lobbies, recreation and co-working spaces, and parking garages — connected everywhere they go.</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- BOTTOM FULL-WIDTH -->
+  <div class="page2-spacer" aria-hidden="true"></div>
   <div class="card full-card">
     <div class="card-title">valuation table · <span id="cap-lbl">5.0%</span> cap · <span id="units-lbl">100</span> units</div>
     <table class="cap-table">
@@ -413,10 +501,10 @@ function exportPDF(){
   const orig = note.textContent;
   note.textContent = 'fiberlink mdu · noi & valuation calculator · www.fiberlinkmdu.com';
 
-  // Inject a temporary <style> that forces landscape for this print job
+  // Inject a temporary <style> that forces portrait for this print job
   const style = document.createElement('style');
-  style.id = '__print_landscape__';
-  style.textContent = '@page { size: landscape !important; margin: 0.4in; }';
+  style.id = '__print_portrait__';
+  style.textContent = '@page { size: A4 portrait; margin: 0; }';
   document.head.appendChild(style);
 
   window.print();
@@ -426,7 +514,7 @@ function exportPDF(){
   note.textContent = orig;
 }
 
-const D = {units:100, bulk:45, fee:85, cap:5.0, occ:100};
+const D = {units:100, bulk:45, fee:85, cap:5.0, occ:95, courtesy:1000};
 const SPREADS = [5,10,15,20,25,30,40,50,75,100];
 
 function g(id){ return parseFloat(document.getElementById(id).value)||0; }
@@ -460,6 +548,15 @@ function calc(){
   const roi     = cost > 0 ? (ann / cost * 100) : 0;  // NOI ÷ bulk cost = ROI on amenity spend
   const valPerUnit = units > 0 ? val / units : 0;  // asset value added per unit
 
+  // --- Courtesy building internet: OpEx savings → asset value ---
+  const opexMode  = window.__opexMode || 'avoid';
+  const opexOn    = opexMode !== 'off';
+  const courtMo   = opexOn ? g('courtesy') : 0;       // retail value / mo provided free
+  const courtYr   = courtMo * 12;                     // annual opex avoided/reduced
+  const courtVal  = cap > 0 ? courtYr / (cap/100) : 0; // asset value from opex savings
+  const opexVerb  = opexMode === 'reduce' ? 'reduced' : 'avoided';
+  const combined  = val + courtVal;                   // amenity value + opex value
+
   // --- Negative spread warning ---
   document.getElementById('neg-alert').classList.toggle('show', nu < 0);
 
@@ -489,11 +586,23 @@ function calc(){
 
   document.getElementById('m-pay').textContent = fc(valPerUnit);
 
+  // --- Courtesy internet render ---
+  document.getElementById('r-courtesy-mo').textContent = '+' + fd(courtMo) + ' / mo';
+  document.getElementById('r-courtesy-yr').textContent = '+' + fd(courtYr) + ' / yr';
+  document.getElementById('r-opex-lbl').textContent = opexOn ? ('annual opex ' + opexVerb) : 'courtesy internet — off';
+  document.getElementById('m-opex').textContent = fc(courtVal);
+  document.getElementById('m-opex-sub').textContent = opexOn ? ('courtesy internet, at ' + cap.toFixed(1) + '% cap') : 'not applied';
+  document.getElementById('m-combined').textContent = fc(combined);
+
   // --- Occupancy Breakeven ---
-  // Owner breaks even when: fee × beUnits/mo × 12 = bulk × units × 12
-  // → beUnits = (bulk × units) / fee
-  // i.e. how many units must pay the fee to cover the total bulk cost
-  const beUnits = fee > 0 ? (bulk * units) / fee : 0;
+  // Owner breaks even when annual fee revenue covers the annual bulk cost,
+  // NET of any courtesy internet OpEx savings that offset that cost:
+  //   fee × beUnits × 12 = (bulk × units × 12) − courtYr
+  // → beUnits = (bulk×units×12 − courtYr) / (fee × 12)
+  // When courtesy is off, courtYr = 0 and this reduces to the pure amenity case.
+  const annualBulk    = bulk * units * 12;
+  const netAnnualCost = Math.max(0, annualBulk - courtYr); // OpEx savings offset bulk cost
+  const beUnits = fee > 0 ? netAnnualCost / (fee * 12) : 0;
   const bePct   = units > 0 ? (beUnits / units) * 100 : 0;
   const beMargin = occPct - bePct; // positive = above breakeven, negative = below
 
@@ -502,12 +611,25 @@ function calc(){
   const beMarginEl = document.getElementById('r-be-margin');
   const beNoteEl   = document.getElementById('be-note');
 
-  if (fee <= bulk) {
+  const offsetNote = (opexOn && courtYr > 0)
+    ? ' Courtesy internet offsets ' + fd(courtYr) + '/yr of bulk cost, lowering breakeven.'
+    : '';
+
+  if (fee <= 0) {
     beUnitsEl.textContent  = 'N/A';
     bePctEl.textContent    = 'N/A';
     beMarginEl.textContent = 'N/A';
-    beNoteEl.textContent   = 'Fee must exceed bulk cost to calculate breakeven.';
+    beNoteEl.textContent   = 'Enter an amenity fee to calculate breakeven.';
     beUnitsEl.className = bePctEl.className = beMarginEl.className = 'result-val';
+  } else if (netAnnualCost <= 0) {
+    // Courtesy OpEx savings fully cover the bulk cost — breakeven at zero occupancy
+    beUnitsEl.textContent  = '0 units';
+    bePctEl.textContent    = '0.0%';
+    beMarginEl.textContent = 'covered at any occupancy';
+    beMarginEl.className    = 'result-val green';
+    beNoteEl.textContent   = 'Courtesy internet OpEx savings alone cover the entire bulk cost — the owner is cash-positive before any fee revenue.';
+    beUnitsEl.className = 'result-val';
+    bePctEl.className   = 'result-val';
   } else {
     beUnitsEl.textContent  = Math.ceil(beUnits) + ' units';
     bePctEl.textContent    = bePct.toFixed(1) + '%';
@@ -515,11 +637,11 @@ function calc(){
     if (beMargin >= 0) {
       beMarginEl.textContent = '+' + beMargin.toFixed(1) + '% above breakeven (' + marginUnits + ' units of cushion)';
       beMarginEl.className   = 'result-val green';
-      beNoteEl.textContent   = 'At current occupancy the owner covers bulk cost and generates positive NOI.';
+      beNoteEl.textContent   = 'At current occupancy the owner covers bulk cost and generates positive NOI.' + offsetNote;
     } else {
       beMarginEl.textContent = beMargin.toFixed(1) + '% below breakeven (' + Math.abs(marginUnits) + ' more units needed)';
       beMarginEl.className   = 'result-val red';
-      beNoteEl.textContent   = 'Owner is not yet covering bulk cost. ' + Math.ceil(beUnits - occUnits) + ' additional occupied units needed to break even.';
+      beNoteEl.textContent   = 'Owner is not yet covering bulk cost. ' + Math.ceil(beUnits - occUnits) + ' additional occupied units needed to break even.' + offsetNote;
     }
     beUnitsEl.className = 'result-val';
     bePctEl.className   = 'result-val';
@@ -538,30 +660,36 @@ function calc(){
 
   // --- Cap table ---
   // Reference rows: "what if net spread were $X" at full occupancy (s × all units)
-  // Your scenario row: uses the true occupancy-adjusted net (fee×occUnits − bulk×units)
+  // Your scenario row: true occupancy-adjusted net, PLUS courtesy OpEx value when on
+  // (so the highlighted row matches the Combined Value Added card).
   const tb = document.getElementById('cap-tbody');
   tb.innerHTML = '';
   displaySpreads.forEach(s => {
     const isYours   = (s === nuRounded);
     const m2  = isYours ? mon : s * units;          // your row = true net; refs = spread × all units
     const a2  = m2 * 12;
-    const v2  = cap > 0 ? a2 / (cap / 100) : 0;
+    const vAmenity = cap > 0 ? a2 / (cap / 100) : 0;
+    const v2  = isYours ? vAmenity + courtVal : vAmenity;  // your row adds OpEx value
     const tr  = document.createElement('tr');
     if (isYours) tr.className = 'hl';
+    const opexTag = (isYours && opexOn && courtVal > 0)
+      ? ` <span style="font-weight:400;color:#4CAF50"> + ${fc(courtVal)} opex</span>`
+      : '';
     const label = isYours
-      ? `<strong>$${s}/unit/mo ← your scenario</strong>`
+      ? `<strong>$${s}/unit/mo ← your scenario</strong>${opexTag}`
       : `$${s}/unit/mo`;
     tr.innerHTML = `<td>${label}</td><td>${fd(m2)}/mo</td><td>+${fd(a2)}/yr</td><td class="val-green">${fc(v2)}</td>`;
     tb.appendChild(tr);
   });
 
-  // --- Bar chart: reference bars at full occupancy; your scenario bar = true net ---
-  const maxValRef = cap > 0 ? displaySpreads[displaySpreads.length - 1] * units * 12 / (cap / 100) : 1;
+  // --- Bar chart: reference bars at full occupancy; your scenario bar = true net + opex ---
+  const yoursBarVal = val + courtVal;   // combined value for your scenario bar
+  const maxValRef = cap > 0 ? Math.max(displaySpreads[displaySpreads.length - 1] * units * 12 / (cap / 100), yoursBarVal) : 1;
   const bw = document.getElementById('bar-wrap');
   bw.innerHTML = '';
   displaySpreads.forEach(s => {
     const isYours  = (s === nuRounded);
-    const v2  = isYours ? val : (cap > 0 ? s * units * 12 / (cap / 100) : 0);
+    const v2  = isYours ? yoursBarVal : (cap > 0 ? s * units * 12 / (cap / 100) : 0);
     const pct = maxValRef > 0 ? Math.min(100, Math.max(0, v2 / maxValRef * 100)) : 0;
     const hl = isYours;
     const d = document.createElement('div');
@@ -578,12 +706,23 @@ function calc(){
 
 function resetDefaults(){
   Object.entries(D).forEach(([id,v])=>{ document.getElementById(id).value=v; });
+  window.__opexMode = 'avoid';
+  document.querySelectorAll('.opex-opt').forEach(b=>b.classList.toggle('active', b.dataset.mode==='avoid'));
   calc();
 }
 
-['units','bulk','fee','cap','occ'].forEach(id=>{
+['units','bulk','fee','cap','occ','courtesy'].forEach(id=>{
   document.getElementById(id).addEventListener('input',calc);
   document.getElementById(id).addEventListener('change',calc);
+});
+
+window.__opexMode = 'avoid';
+document.querySelectorAll('.opex-opt').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    window.__opexMode = btn.dataset.mode;
+    document.querySelectorAll('.opex-opt').forEach(b=>b.classList.toggle('active', b===btn));
+    calc();
+  });
 });
 
 calc();
